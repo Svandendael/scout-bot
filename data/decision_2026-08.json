@@ -1,0 +1,17 @@
+{
+  "asof": "2026-08-31",
+  "slots": [
+    "EMIM",
+    "WSML",
+    "CSPX"
+  ],
+  "reasons": {
+    "EMIM": "enters: eligible and in the top group",
+    "WSML": "enters: eligible and in the top group",
+    "CSPX": "enters: eligible and in the top group",
+    "IWDA": "would rank ahead of CSPX but within the switch margin \u2014 no change",
+    "IMAE": "would rank ahead of CSPX but within the switch margin \u2014 no change"
+  },
+  "regime": "risk-on",
+  "taken_on": "2026-09-08"
+}

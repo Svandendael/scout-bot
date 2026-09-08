@@ -1,0 +1,30 @@
+# The dials. Defaults come from the research (see docs in the Scout Bot Blueprint).
+
+signals:
+  lookbacks_months: [3, 6, 9, 12]   # ensemble momentum = mean of these returns
+  trend_sma_months: 10              # price above the 10-month average = uptrend
+  trend_confirm_months: 2           # must be above (or below) for this many month-ends
+  absmom_months: 12                 # 12-month return must beat the cash benchmark
+  high_window_days: 252             # for "distance from 52-week high"
+
+portfolio:
+  top_n: 3                          # number of slots
+  switch_margin: 0.02               # challenger must beat an incumbent's score by 2 points
+  rebalance_band: 0.05              # rebalance only when a weight drifts > 5 points
+  tob_penalty: 0.5                  # score -= tob_penalty * round-trip TOB
+  max_weight: 0.40                  # cap per holding (soft: informs the report)
+  monthly_contribution: 250         # EUR, goes to the most underweight holding
+  midmonth_alert_drawdown: 0.15     # alert (no action) if a holding is >15% below its 12m peak
+
+costs:
+  commission_per_order: 0.0         # EUR; MeDirect = 0, Bolero = 2.50, Saxo = 2
+  spread_pct: 0.001                 # 0.10% assumed bid-ask, paid once per round trip
+  typical_order_eur: 100            # used to turn fixed commissions into a % in the backtest
+
+backtest:
+  start: "2012-01-01"
+  benchmark_weights_60_40: {IWDA: 0.6, IBGM: 0.4}
+
+data:
+  cache_dir: data
+  min_history_months: 13

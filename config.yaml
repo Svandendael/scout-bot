@@ -13,7 +13,9 @@ portfolio:
   rebalance_band: 0.05              # rebalance only when a weight drifts > 5 points
   tob_penalty: 0.5                  # score -= tob_penalty * round-trip TOB
   max_weight: 0.40                  # cap per holding (soft: informs the report)
-  monthly_contribution: 250         # EUR, goes to the most underweight holding
+  monthly_contribution: 250         # EUR per month
+  core_share: 0.5                   # share of every contribution that goes to the permanent core ETF
+  core_id: IWDA                     # the core ETF (never sold by the bot); 0 = pure scout
   midmonth_alert_drawdown: 0.15     # alert (no action) if a holding is >15% below its 12m peak
 
 costs:
@@ -22,7 +24,8 @@ costs:
   typical_order_eur: 100            # used to turn fixed commissions into a % in the backtest
 
 backtest:
-  start: "2012-01-01"
+  start: "2005-01-01"               # with proxy backfill the history reaches back to ~2004
+  backfill: true                    # splice US-listed / index proxies (EUR-converted) before each ETF's inception
   benchmark_weights_60_40: {IWDA: 0.6, IBGM: 0.4}
 
 data:

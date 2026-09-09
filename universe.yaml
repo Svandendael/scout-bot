@@ -6,6 +6,10 @@
 # tob:       Belgian stock-exchange tax per side (0.0012 = 0.12%). VERIFY on your broker's
 #            order ticket; entries marked verify=true were inferred from the sponsor's pattern.
 # tickers:   Yahoo Finance symbols tried in order until one returns data.
+# proxies:   longer-history stand-ins (US-listed twin or index, USD) used ONLY to extend the
+#            backtest before the ETF existed; converted to EUR and scaled to splice seamlessly.
+# fx:        Yahoo symbol for EUR/USD used to convert USD proxies.
+fx: EURUSD=X
 # cash_benchmark: the series used for the "beats cash" test (absolute momentum).
 
 cash_benchmark: IBGS
@@ -20,6 +24,7 @@ etfs:
     role: core
     tob: 0.0012
     tickers: [IWDA.AS, EUNL.DE, IWDA.L]
+    proxies: ["^990100-USD-STRD", ACWI, URTH]
   - id: CSPX
     name: iShares Core S&P 500
     isin: IE00B5BMR087
@@ -27,6 +32,7 @@ etfs:
     role: core
     tob: 0.0012
     tickers: [CSPX.AS, SXR8.DE, CSPX.L]
+    proxies: [SPY, "^GSPC"]
   - id: IMAE
     name: iShares Core MSCI Europe
     isin: IE00B4K48X80
@@ -35,6 +41,7 @@ etfs:
     tob: 0.0012
     verify: true
     tickers: [IMAE.AS, IQQY.DE, IMEU.L]
+    proxies: [IEV, VGK, "^STOXX"]
   - id: EMIM
     name: iShares Core MSCI EM IMI
     isin: IE00BKM4GZ66
@@ -42,6 +49,7 @@ etfs:
     role: core
     tob: 0.0012
     tickers: [EMIM.AS, IS3N.DE, EMIM.L]
+    proxies: [EEM, VWO]
   - id: WSML
     name: iShares MSCI World Small Cap
     isin: IE00BF4RFH31
@@ -49,7 +57,8 @@ etfs:
     role: core
     tob: 0.0012
     verify: true
-    tickers: [WSML.AS, IUSN.DE, WSML.L]
+    tickers: [IUSN.DE, WSML.AS, WSML.L]
+    proxies: [IWM, "^RUT"]
   - id: SGLD
     name: Invesco Physical Gold ETC
     isin: IE00B579F325
@@ -58,6 +67,7 @@ etfs:
     tob: 0.0035
     verify: true
     tickers: [SGLD.AS, 8PSG.DE, SGLD.L]
+    proxies: [GLD, "GC=F"]
   - id: IBGM
     name: iShares € Govt Bond 7-10yr (dist)
     isin: IE00B1FZS806
@@ -66,13 +76,15 @@ etfs:
     defensive: true
     tob: 0.0012
     tickers: [IBGM.AS, IBCM.DE, IBGM.L]
+    proxies: [IBGM.L, IBCM.DE]
   - id: IBTM
     name: iShares $ Treasury 7-10yr (dist)
     isin: IE00B1FZS798
     sleeve: USD Treasury 7-10y
     role: core
     tob: 0.0012
-    tickers: [IBTM.AS, IBTM.L, IUSM.DE]
+    tickers: [IBTM.L, IUSM.DE, IBTM.AS]
+    proxies: [IEF]
   - id: IBGS
     name: iShares € Govt Bond 1-3yr (dist)
     isin: IE00B14X4Q57
@@ -81,13 +93,15 @@ etfs:
     defensive: true
     tob: 0.0012
     tickers: [IBGS.AS, IBGS.L, IBCA.DE]
+    proxies: [IBGS.L, IBCA.DE]
   - id: IMIE
     name: SPDR MSCI ACWI IMI
     isin: IE00B3YLTY66
     sleeve: Global all-cap
     role: benchmark
     tob: 0.0012
-    tickers: [IMIE.AS, SPYI.DE, IMID.L]
+    tickers: [SPYI.DE, IMIE.AS, IMID.L]
+    proxies: [VT, ACWI]
   # ---- watchlist: ranked and shown, not proposed ----
   - id: CNDX
     name: iShares Nasdaq 100
@@ -103,7 +117,7 @@ etfs:
     role: watch
     tob: 0.0012
     verify: true
-    tickers: [IWMO.AS, IS3R.DE, IWMO.L]
+    tickers: [IS3R.DE, IWMO.AS, IWMO.L]
   - id: IWQU
     name: iShares MSCI World Quality
     isin: IE00BP3QZ601
@@ -111,7 +125,7 @@ etfs:
     role: watch
     tob: 0.0012
     verify: true
-    tickers: [IWQU.AS, IS3Q.DE, IWQU.L]
+    tickers: [IS3Q.DE, IWQU.AS, IWQU.L]
   - id: IWVL
     name: iShares MSCI World Value
     isin: IE00BP3QZB59
@@ -119,7 +133,7 @@ etfs:
     role: watch
     tob: 0.0012
     verify: true
-    tickers: [IWVL.AS, IS3S.DE, IWVL.L]
+    tickers: [IS3S.DE, IWVL.AS, IWVL.L]
   - id: MVOL
     name: iShares MSCI World Min Vol
     isin: IE00B8FHGS14
@@ -127,14 +141,14 @@ etfs:
     role: watch
     tob: 0.0012
     verify: true
-    tickers: [MVOL.AS, IQQ0.DE, MVOL.L]
+    tickers: [IQQ0.DE, MVOL.AS, MVOL.L]
   - id: VVSM
     name: VanEck Semiconductor
     isin: IE00BMC38736
     sleeve: Sector semiconductors
     role: watch
     tob: 0.0012
-    tickers: [VVSM.AS, VVSM.DE, SMH.L]
+    tickers: [VVSM.DE, VVSM.AS, SMH.L]
   - id: XDWH
     name: Xtrackers MSCI World Health Care
     isin: IE00BM67HK77
@@ -150,7 +164,7 @@ etfs:
     role: watch
     tob: 0.0012
     verify: true
-    tickers: [DTLA.AS, IS04.DE, DTLA.L]
+    tickers: [IS04.DE, DTLA.AS, DTLA.L]
   - id: IBCI
     name: iShares € Inflation Linked Govt
     isin: IE00B0M62X26
@@ -172,7 +186,7 @@ etfs:
     sleeve: EUR high yield
     role: watch
     tob: 0.0012
-    tickers: [IHYG.AS, IHYG.L, EUNW.DE]
+    tickers: [IHYG.L, IHYG.AS, EUNW.DE]
   - id: IWDP
     name: iShares Developed Markets Property Yield (dist)
     isin: IE00B1FZS350
@@ -187,4 +201,4 @@ etfs:
     role: watch
     tob: 0.0012
     verify: true
-    tickers: [ICOM.AS, SXRS.DE, ICOM.L]
+    tickers: [SXRS.DE, ICOM.AS, ICOM.L]

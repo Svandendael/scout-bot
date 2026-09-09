@@ -10,8 +10,8 @@ import pandas as pd
 
 from . import ROOT
 
-PALETTE = {"scout": ("#2a78d6", "#3987e5"), "global_etf": ("#eb6834", "#d95926"), "60_40": ("#4a3aa7", "#9085e9")}
-LABELS = {"scout": "Scout", "global_etf": "Global equity ETF", "60_40": "60/40"}
+PALETTE = {"scout": ("#2a78d6", "#3987e5"), "global_etf": ("#eb6834", "#d95926"), "blend": ("#4a3aa7", "#9085e9")}
+LABELS = {"scout": "Scout (satellite alone)", "global_etf": "Global equity ETF", "blend": "Core + satellite"}
 
 
 def pct(x, d=1, sign=False):
@@ -122,12 +122,19 @@ def render(ctx: dict) -> str:
     tw = ctx["target_weights"]
     total = orders["portfolio_value"]
     hrows = []
+    ch = ctx.get("core_holdings")
+    if ch is not None and len(ch):
+        for i in ch.index:
+            units = int(ch.loc[i, "units"]); px = feat["price"].get(i, np.nan); val = units * px if px == px else 0
+            hrows.append(f"<tr><td><b>{i}</b> <span class='pill accent'>core</span></td><td class='num'>{units}</td><td class='num'>{eur(val)}</td>"
+                         f"<td class='num'>{pct(val/total if total else 0,0)}</td><td class='num'>—</td><td class='num'>—</td></tr>")
+    sat_total = total - orders.get("core_value", 0)
     for i in sorted(set(h.index) | set(tw)):
         units = int(h.loc[i, "units"]) if i in h.index else 0
         px = feat["price"].get(i, np.nan)
         val = units * px if px == px else 0
-        cur_w = val / total if total else 0
-        hrows.append(f"<tr><td><b>{i}</b></td><td class='num'>{units}</td><td class='num'>{eur(val)}</td>"
+        cur_w = val / sat_total if sat_total else 0
+        hrows.append(f"<tr><td><b>{i}</b> <span class='pill neutral'>scout</span></td><td class='num'>{units}</td><td class='num'>{eur(val)}</td>"
                      f"<td class='num'>{pct(cur_w,0)}</td><td class='num'>{pct(tw.get(i,0),0)}</td>"
                      f"<td class='num {'r' if abs(cur_w-tw.get(i,0))>ctx['cfg']['portfolio']['rebalance_band'] else ''}'>{pct(cur_w-tw.get(i,0),0,True)}</td></tr>")
     orows = "".join(
@@ -163,16 +170,25 @@ def render(ctx: dict) -> str:
         q = bt["quarterly"].tail(12)
         qrows = "".join(f"<tr><td>{d.year} Q{(d.month-1)//3+1}</td><td class='num {'g' if r.scout>=0 else 'r'}'>{pct(r.scout,1,True)}</td>"
                         f"<td class='num {'g' if r.global_etf>=0 else 'r'}'>{pct(r.global_etf,1,True)}</td>"
-                        f"<td class='num'>{pct(r.scout-r.global_etf,1,True)}</td></tr>" for d, r in q.iterrows())
+                        f"<td class='num {'g' if r.blend>=0 else 'r'}'>{pct(r.blend,1,True)}</td></tr>" for d, r in q.iterrows())
+        wy = bt.get("worst_years")
+        wrows = "".join(f"<tr><td>{y}</td><td class='num r'>{pct(r.global_etf,1)}</td><td class='num r'>{pct(r.scout,1)}</td><td class='num r'>{pct(r.blend,1)}</td></tr>"
+                        for y, r in wy.iterrows()) if wy is not None and len(wy) else "<tr><td colspan='4' class='small'>No year with a >10% drawdown in the benchmark.</td></tr>"
+        mrow6040 = (f"<tr><td><span class='swatch' style='background:var(--muted)'></span>60/40</td><td class='num'>{pct(m['60_40'].get('cagr'))}</td>"
+                    f"<td class='num'>{pct(m['60_40'].get('vol'))}</td><td class='num'>{m['60_40'].get('sharpe', float('nan')):.2f}</td>"
+                    f"<td class='num'>{pct(m['60_40'].get('maxdd'))}</td><td class='num'>{m['60_40'].get('final', float('nan')):.2f}</td></tr>")
         bt_html = f"""
         <p class='small'>{bt['start'].date()} → {bt['end'].date()} · month-end rebalancing · costs: half-spread, TOB per side, commission as % of a €{ctx['cfg']['costs']['typical_order_eur']} order ·
         {bt['trades_per_year']:.1f} trades/yr · risk-off {pct(bt['months_risk_off'],0)} of months · {'synthetic data — for testing the code only' if ctx.get('synthetic') else 'real prices'}</p>
-        <div class='chartwrap'>{_svg_chart({'scout': bt['curve'], 'global_etf': bt['global_etf'], '60_40': bt['60_40']})}</div>
+        <div class='chartwrap'>{_svg_chart({'scout': bt['curve'], 'global_etf': bt['global_etf'], 'blend': bt['blend']})}</div>
         <div class='legend'>{''.join(f"<span><i style='background:var(--s-{k})'></i>{v}</span>" for k, v in LABELS.items())}</div>
         <div class='tablewrap'><table><tr><th>Series</th><th class='num'>CAGR</th><th class='num'>Volatility</th><th class='num'>Sharpe</th><th class='num'>Max drawdown</th><th class='num'>Growth of 1</th></tr>
-        {mrow('scout')}{mrow('global_etf')}{mrow('60_40')}</table></div>
+        {mrow('blend')}{mrow('scout')}{mrow('global_etf')}{mrow6040}</table></div>
+        <p class='small'>Core + satellite = {bt['core_share']:.0%} permanent global ETF, {1-bt['core_share']:.0%} scout, no rebalancing between the two — the shape of a monthly contributor who splits each deposit.</p>
+        <h3>Bad years: how far each fell from its peak</h3>
+        <div class='tablewrap'><table><tr><th>Year</th><th class='num'>Global ETF</th><th class='num'>Scout</th><th class='num'>Core + satellite</th></tr>{wrows}</table></div>
         <h3>Last 12 quarters</h3>
-        <div class='tablewrap'><table><tr><th>Quarter</th><th class='num'>Scout</th><th class='num'>Global ETF</th><th class='num'>Difference</th></tr>{qrows}</table></div>"""
+        <div class='tablewrap'><table><tr><th>Quarter</th><th class='num'>Scout</th><th class='num'>Global ETF</th><th class='num'>Core + satellite</th></tr>{qrows}</table></div>"""
 
     verify = [i for i, f in feat.iterrows() if f["verify"]]
     cash_r = feat.attrs.get("cash_r12")
@@ -184,9 +200,9 @@ def render(ctx: dict) -> str:
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
 :root{{--paper:#F2F4F6;--surface:#fff;--ink:#141C24;--ink-2:#3A4652;--muted:#6B7783;--line:#D6DCE2;--line-2:#E6EAEE;--accent:#2C5E8A;--accent-soft:#E3ECF4;--bull:#1E8A5A;--bull-soft:#E2F2EA;--bear:#C43D35;--bear-soft:#F8E4E2;--warn:#9A6A12;--warn-soft:#F7EDD6;--code:#EEF1F4;
---s-scout:{PALETTE['scout'][0]};--s-global_etf:{PALETTE['global_etf'][0]};--s-60_40:{PALETTE['60_40'][0]}}}
+--s-scout:{PALETTE['scout'][0]};--s-global_etf:{PALETTE['global_etf'][0]};--s-blend:{PALETTE['blend'][0]}}}
 @media (prefers-color-scheme:dark){{:root{{--paper:#0F151B;--surface:#161E26;--ink:#E8ECF0;--ink-2:#C4CCD4;--muted:#8A96A2;--line:#2A343E;--line-2:#222B34;--accent:#7FB0DC;--accent-soft:#1A2A3A;--bull:#4CC08A;--bull-soft:#15302A;--bear:#E8776F;--bear-soft:#3A1F1E;--warn:#E0B25A;--warn-soft:#332A16;--code:#1D262F;
---s-scout:{PALETTE['scout'][1]};--s-global_etf:{PALETTE['global_etf'][1]};--s-60_40:{PALETTE['60_40'][1]}}}}}
+--s-scout:{PALETTE['scout'][1]};--s-global_etf:{PALETTE['global_etf'][1]};--s-blend:{PALETTE['blend'][1]}}}}}
 *{{box-sizing:border-box}}body{{margin:0;background:var(--paper);color:var(--ink);font-family:"Source Serif 4",Georgia,serif;font-size:16px;line-height:1.5}}
 h1,h2,h3{{font-family:Archivo,Arial,sans-serif;margin:0;line-height:1.15;letter-spacing:-.01em}}h1{{font-size:2rem}}h2{{font-size:1.4rem;margin-top:2.6rem;padding-top:1rem;border-top:2px solid var(--ink)}}h3{{font-size:1.05rem;margin-top:1.4rem}}
 .wrap{{max-width:1120px;margin:0 auto;padding:2rem 1.2rem 4rem}}p{{max-width:70ch}}.small{{font-size:.82rem;color:var(--muted)}}
@@ -206,17 +222,18 @@ ul{{max-width:70ch}}
 <h1>{html.escape(ctx['title'])}</h1>
 <div class="meta"><span>Page updated <b>{today}</b></span><span>Prices to <b>{meta.get('last_price_date','—')}</b></span><span>Standing decision <b>{dec_date}</b></span><span>Next decision <b>{next_dec}</b></span><span>Regime <b>{dec['regime']}</b></span></div>
 <div class="tiles">
-<div><div class="k">{', '.join(dict.fromkeys(dec['slots'])) or '—'}</div><div class="l">target holdings</div></div>
+<div><div class="k">{(ctx.get('core_id') + ' + ') if ctx.get('core_share') else ''}{', '.join(dict.fromkeys(dec['slots'])) or '—'}</div><div class="l">{'core + ' if ctx.get('core_share') else ''}scout slots</div></div>
 <div><div class="k">{eur(total)}</div><div class="l">portfolio value incl. cash</div></div>
 <div><div class="k">{len(orders['orders'])}</div><div class="l">proposed orders</div></div>
 <div><div class="k">{pct(cash_r,1,True) if cash_r==cash_r else '—'}</div><div class="l">cash benchmark, 12 months</div></div>
 </div>
 {alert_html}
 <h2>Proposed orders</h2>
-<p class="small">Whole units only. TOB is the Belgian transaction tax you pay per side. Cash after orders: {eur(orders['cash_after'])}.</p>
+<p class="small">Whole units only. {f"{ctx['core_share']:.0%} of each contribution goes to the core ETF {ctx['core_id']} (never sold); the rest is run by the scout. " if ctx.get('core_share') else ''}TOB is the Belgian transaction tax you pay per side. Cash after orders: {eur(orders['cash_after'])}.</p>
 <div class="tablewrap"><table><tr><th>Side</th><th>ETF</th><th class="num">Units</th><th class="num">Price</th><th class="num">Value</th><th class="num">TOB</th><th>Reason</th></tr>{orows}</table></div>
 {('<ul class="small">'+notes+'</ul>') if notes else ''}
 <h3>Holdings vs target</h3>
+<p class="small">Scout weights and targets are relative to the scout bucket only.</p>
 <div class="tablewrap"><table><tr><th>ETF</th><th class="num">Units</th><th class="num">Value</th><th class="num">Weight</th><th class="num">Target</th><th class="num">Drift</th></tr>{''.join(hrows) or "<tr><td colspan='6' class='small'>No holdings yet — edit holdings.csv after your first purchase.</td></tr>"}</table></div>
 <h2>Ranking</h2>
 <p class="small">Score = average of 3/6/9/12-month returns minus a penalty for high-tax ETFs. Trend = distance from the 10-month average (green: above for two month-ends). Cash ✓ = 12-month return beats short-term government bonds. 52w = price as % of its 52-week high. TOB "?" = inferred, verify on your broker's order screen.</p>

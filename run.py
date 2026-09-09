@@ -24,7 +24,8 @@ import pandas as pd
 from scout import ROOT, load_config, load_universe
 from scout import data as D
 from scout.signals import compute_features, month_ends
-from scout.portfolio import select_targets, target_weights, load_holdings, propose_orders
+from scout.portfolio import (select_targets, target_weights, load_holdings, propose_orders,
+                             split_holdings, propose_core_order)
 from scout.backtest import run_backtest, sweep
 from scout.report import render, write_page
 
@@ -64,18 +65,33 @@ def standing_decision(prices: pd.DataFrame, cfg: dict, uni: dict, current: list[
 def cmd_report(prices: pd.DataFrame, synthetic=False, title="Scout") -> str:
     cfg, uni = load_config(), load_universe()
     holdings = load_holdings()
-    current = [i for i in holdings.index if holdings.loc[i, "units"] > 0]
+    core_h, scout_h = split_holdings(holdings)
+    current = [i for i in scout_h.index if scout_h.loc[i, "units"] > 0]
     dec = standing_decision(prices, cfg, uni, current, freeze=not synthetic)
     feat_now = compute_features(prices, None, cfg, uni)
     # preview: what would the decision be if today were month-end?
     prev = select_targets(feat_now, current, cfg, uni)
     tw = target_weights(dec["slots"])
-    cash = float(cfg["portfolio"]["monthly_contribution"]) + float(_cash_file())
-    orders = propose_orders(feat_now, tw, holdings, cash, cfg, uni)
+    pc = cfg["portfolio"]
+    contribution = float(pc["monthly_contribution"])
+    core_share = float(pc.get("core_share", 0) or 0)
+    core_id = pc.get("core_id")
+    carried = float(_cash_file())
+    # cash split: the contribution is divided by core_share; carried cash follows the same split
+    core_cash = (contribution + carried) * core_share if core_id else 0.0
+    scout_cash = (contribution + carried) - core_cash
+    core_orders = propose_core_order(feat_now, core_id, core_cash, cfg, uni) if core_id and core_share > 0 else {"orders": [], "cash_after": 0.0, "notes": []}
+    orders = propose_orders(feat_now, tw, scout_h, scout_cash, cfg, uni)
+    orders["orders"] = core_orders["orders"] + orders["orders"]
+    orders["notes"] = core_orders["notes"] + orders["notes"]
+    orders["cash_after"] += core_orders["cash_after"]
+    orders["core_value"] = float(sum(core_h.loc[i, "units"] * feat_now["price"].get(i, 0) for i in core_h.index))
+    orders["portfolio_value"] += orders["core_value"] + core_cash
     meta = D.load_meta() if not synthetic else {"updated": str(date.today()), "sources": {}}
     meta["last_price_date"] = str(prices.index[-1].date())
     bt = pickle.loads(BT_FILE.read_bytes()) if BT_FILE.exists() else None
-    ctx = {"features_now": feat_now, "decision": dec, "orders": orders, "holdings": holdings,
+    ctx = {"features_now": feat_now, "decision": dec, "orders": orders, "holdings": scout_h, "core_holdings": core_h,
+           "core_id": core_id, "core_share": core_share,
            "target_weights": tw, "current_ids": current, "cfg": cfg, "meta": meta, "backtest": bt,
            "preview_slots": prev["slots"], "preview_differs": sorted(prev["slots"]) != sorted(dec["slots"]),
            "synthetic": synthetic, "title": title}
@@ -104,10 +120,13 @@ def cmd_backtest(prices: pd.DataFrame, do_sweep=False):
     bt = run_backtest(prices, cfg, uni)
     m = bt["metrics"]
     print(f"  {'':12s} {'CAGR':>7s} {'Vol':>7s} {'Sharpe':>7s} {'MaxDD':>7s}")
-    for k in ("scout", "global_etf", "60_40"):
+    for k in ("scout", "global_etf", "60_40", "blend"):
         x = m[k]
         print(f"  {k:12s} {x['cagr']*100:6.1f}% {x['vol']*100:6.1f}% {x['sharpe']:7.2f} {x['maxdd']*100:6.1f}%")
-    print(f"  trades/yr {bt['trades_per_year']:.1f} · risk-off {bt['months_risk_off']*100:.0f}% of months · {bt['start'].date()} → {bt['end'].date()}")
+    print(f"  trades/yr {bt['trades_per_year']:.1f} · risk-off {bt['months_risk_off']*100:.0f}% of months · {bt['start'].date()} → {bt['end'].date()} · blend = {bt['core_share']:.0%} core")
+    if len(bt["worst_years"]):
+        print("  worst years (max drawdown within the year):")
+        print(bt["worst_years"].to_string(float_format=lambda v: f"{v*100:6.1f}%"))
     BT_FILE.write_bytes(pickle.dumps(bt))
     if do_sweep:
         sw = sweep(prices, cfg, uni)
@@ -136,11 +155,11 @@ def main(argv=None):
     if a.cmd == "daily":
         print("fetch…"); prices = D.update_prices(force=a.force)
         if not BT_FILE.exists() or date.today().day <= 3:
-            print("backtest…"); cmd_backtest(prices)
+            print("backtest…"); cmd_backtest(D.load_prices(long=True))
         print("report…"); print("OK →", cmd_report(prices)); return
     prices = D.load_prices()
     if a.cmd == "backtest":
-        cmd_backtest(prices, do_sweep=a.sweep)
+        cmd_backtest(D.load_prices(long=True), do_sweep=a.sweep)
     elif a.cmd == "report":
         print("OK →", cmd_report(prices))
 

@@ -39,9 +39,23 @@ what the GitHub job runs every weekday morning.
 The job commits `data/prices.csv`, the frozen monthly decisions and `docs/` back into the
 repo, so the history of what the bot decided is in git.
 
+## Core + satellite
+
+`portfolio.core_share` (default 0.5) sends that share of every contribution into the
+permanent core ETF (`portfolio.core_id`, default IWDA), which the bot never sells. The
+rest is run by the scout. Set `core_share: 0` for a pure scout. In `holdings.csv`, mark
+core units with `bucket=core`; everything else is the scout's.
+
+## Backfilled history
+
+With `backtest.backfill: true`, each core ETF's history is extended before its inception
+with a long-lived proxy (US-listed twin or index from `universe.yaml`, converted to EUR
+and scaled to meet the real series). Real prices are never altered; the backfill is used
+only by the backtest (`data/prices_long.csv`), so the 2008 crash is in the test.
+
 ## Your side of the loop
 
-- **After you buy or sell**, edit `holdings.csv` (units per ETF) and `cash.txt`
+- **After you buy or sell**, edit `holdings.csv` (units per ETF, `bucket` core|scout) and `cash.txt`
   (uninvested cash at the broker, before this month's contribution). The page then
   shows drift against target and proposes orders relative to what you really own.
 - **Monthly contribution** is `portfolio.monthly_contribution` in `config.yaml`.
@@ -60,6 +74,7 @@ repo, so the history of what the bot decided is in git.
 | `switch_margin` | 0.02 | a challenger must beat an incumbent by 2 points to replace it |
 | `rebalance_band` | 0.05 | ignore weight drift under 5 points |
 | `tob_penalty` | 0.5 | score penalty × round-trip TOB (keeps 1.32%-TOB ETFs out unless they earn it) |
+| `core_share` / `core_id` | 0.5 / IWDA | share of each contribution held permanently in the core ETF |
 | `midmonth_alert_drawdown` | 0.15 | show an alert (never an order) if a holding is >15% below its 12-month peak |
 | `costs.*` | MeDirect | commission per order, spread, typical order size — used in the backtest |
 

@@ -81,8 +81,34 @@ def target_weights(slots: list[str]) -> dict[str, float]:
 
 # ------------------------------------------------------------------ holdings & orders
 def load_holdings() -> pd.DataFrame:
+    """holdings.csv: id,units,avg_cost_eur[,bucket]  bucket = core | scout (default scout)."""
     df = pd.read_csv(ROOT / "holdings.csv")
-    return df.set_index("id") if len(df) else pd.DataFrame(columns=["units", "avg_cost_eur"]).rename_axis("id")
+    if "bucket" not in df.columns:
+        df["bucket"] = "scout"
+    df["bucket"] = df["bucket"].fillna("scout")
+    if not len(df):
+        return pd.DataFrame(columns=["units", "avg_cost_eur", "bucket"]).rename_axis("id")
+    return df.set_index("id")
+
+
+def split_holdings(holdings: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
+    return holdings[holdings["bucket"] == "core"], holdings[holdings["bucket"] != "core"]
+
+
+def propose_core_order(feat: pd.DataFrame, core_id: str, cash: float, cfg: dict, uni: dict) -> dict:
+    """Whole units of the permanent core ETF with the core share of the cash. Never sells."""
+    c = cfg["costs"]
+    px = feat["price"].get(core_id, float("nan"))
+    if px != px or px <= 0:
+        return {"orders": [], "cash_after": cash, "notes": [f"{core_id}: no price"]}
+    unit_cost = px * (1 + uni["by_id"][core_id]["tob"] + c["spread_pct"] / 2) + c["commission_per_order"]
+    units = int(cash // unit_cost)
+    if units == 0:
+        return {"orders": [], "cash_after": cash,
+                "notes": [f"core {core_id}: one unit costs €{unit_cost:.2f}, core cash €{cash:.2f} — carried to next month"]}
+    return {"orders": [{"side": "BUY", "id": core_id, "units": units, "price": px, "value": units * px,
+                        "tob": units * px * uni["by_id"][core_id]["tob"], "reason": "core: permanent holding, never sold"}],
+            "cash_after": cash - units * unit_cost, "notes": []}
 
 
 def propose_orders(feat: pd.DataFrame, weights: dict[str, float], holdings: pd.DataFrame,

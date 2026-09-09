@@ -1,5 +1,5 @@
 {
-  "updated": "2026-09-08",
+  "updated": "2026-09-09",
   "decision": {
     "asof": "2026-08-31",
     "slots": [
@@ -20,24 +20,33 @@
   "orders": [
     {
       "side": "BUY",
+      "id": "IWDA",
+      "units": 1,
+      "price": 127.330002,
+      "value": 127.330002,
+      "tob": 0.1527960024,
+      "reason": "core: permanent holding, never sold"
+    },
+    {
+      "side": "BUY",
       "id": "EMIM",
-      "units": 2,
-      "price": 48.55500030517578,
-      "value": 97.11000061035156,
-      "tob": 0.11653200073242187,
+      "units": 1,
+      "price": 48.41,
+      "value": 48.41,
+      "tob": 0.05809199999999999,
       "reason": "underweight by 33 pts"
     },
     {
       "side": "BUY",
       "id": "WSML",
-      "units": 12,
-      "price": 9.128000259399414,
-      "value": 109.53600311279297,
-      "tob": 0.13144320373535154,
+      "units": 6,
+      "price": 9.143,
+      "value": 54.858000000000004,
+      "tob": 0.0658296,
       "reason": "underweight by 33 pts"
     }
   ],
-  "cash_after": 143.00269807052612,
+  "cash_after": 119.0099813966,
   "preview_slots": [
     "EMIM",
     "WSML",
@@ -47,232 +56,232 @@
     {
       "id": "VVSM",
       "role": "watch",
-      "score": 0.5716276225059408,
-      "adj_score": 0.5704276225059408,
+      "score": 0.5472418018447245,
+      "adj_score": 0.5460418018447245,
       "trend_ok": true,
       "absmom": true,
-      "dist_sma": 0.1927401396704358,
-      "price": 93.44999694824219
+      "dist_sma": 0.17641041228529186,
+      "price": 92.0
     },
     {
       "id": "IWVL",
       "role": "watch",
-      "score": 0.328343002440901,
-      "adj_score": 0.327143002440901,
+      "score": 0.3353908474574036,
+      "adj_score": 0.33419084745740363,
       "trend_ok": true,
       "absmom": true,
-      "dist_sma": 0.14943269595235886,
-      "price": 71.62000274658203
+      "dist_sma": 0.1548270072751936,
+      "price": 72.0
     },
     {
       "id": "ICOM",
       "role": "watch",
-      "score": 0.24275674694383792,
-      "adj_score": 0.2415567469438379,
+      "score": 0.24545989693382364,
+      "adj_score": 0.24425989693382363,
       "trend_ok": true,
       "absmom": true,
-      "dist_sma": 0.11191725361354865,
-      "price": 9.194999694824219
+      "dist_sma": 0.11406637248383,
+      "price": 9.215
     },
     {
       "id": "EMIM",
       "role": "core",
-      "score": 0.20332144464107377,
-      "adj_score": 0.20212144464107376,
+      "score": 0.19972795607574054,
+      "adj_score": 0.19852795607574053,
       "trend_ok": true,
       "absmom": true,
-      "dist_sma": 0.09235340975955553,
-      "price": 48.55500030517578
+      "dist_sma": 0.08944669259692328,
+      "price": 48.41
     },
     {
       "id": "IWMO",
       "role": "watch",
-      "score": 0.1657584047613923,
-      "adj_score": 0.1645584047613923,
+      "score": 0.1590877120563538,
+      "adj_score": 0.1578877120563538,
       "trend_ok": true,
       "absmom": true,
-      "dist_sma": 0.08863994095440186,
-      "price": 101.36000061035156
+      "dist_sma": 0.08308523027640469,
+      "price": 100.779999
     },
     {
       "id": "CNDX",
       "role": "watch",
-      "score": 0.15324142088784,
-      "adj_score": 0.15204142088784,
+      "score": 0.15197865226482282,
+      "adj_score": 0.15077865226482282,
       "trend_ok": true,
       "absmom": true,
-      "dist_sma": 0.08142509443040069,
-      "price": 1461.199951171875
+      "dist_sma": 0.08036889260988556,
+      "price": 1459.599976
     },
     {
       "id": "IMIE",
       "role": "benchmark",
-      "score": 0.14154775218263932,
-      "adj_score": 0.1403477521826393,
+      "score": 0.14273297067211527,
+      "adj_score": 0.14153297067211526,
       "trend_ok": true,
       "absmom": true,
-      "dist_sma": 0.07272792627498381,
-      "price": 11.557999610900879
+      "dist_sma": 0.07372211292178599,
+      "price": 11.57
     },
     {
       "id": "WSML",
       "role": "core",
-      "score": 0.13682308513720226,
-      "adj_score": 0.13562308513720225,
+      "score": 0.1386912159749059,
+      "adj_score": 0.1374912159749059,
       "trend_ok": true,
       "absmom": true,
-      "dist_sma": 0.06316319252797942,
-      "price": 9.128000259399414
+      "dist_sma": 0.06472424073038963,
+      "price": 9.143
     },
     {
       "id": "IWDA",
       "role": "core",
-      "score": 0.12978645380767712,
-      "adj_score": 0.1285864538076771,
+      "score": 0.131296850087881,
+      "adj_score": 0.130096850087881,
       "trend_ok": true,
       "absmom": true,
-      "dist_sma": 0.06939372509127018,
-      "price": 127.16000366210938
+      "dist_sma": 0.07067031400555912,
+      "price": 127.330002
     },
     {
       "id": "CSPX",
       "role": "core",
-      "score": 0.1280375030927975,
-      "adj_score": 0.12683750309279748,
+      "score": 0.12903382899259763,
+      "adj_score": 0.12783382899259763,
       "trend_ok": true,
       "absmom": true,
-      "dist_sma": 0.07078218488514487,
-      "price": 713.2899780273438
-    },
-    {
-      "id": "IMAE",
-      "role": "core",
-      "score": 0.11654086530064078,
-      "adj_score": 0.11534086530064078,
-      "trend_ok": true,
-      "absmom": true,
-      "dist_sma": 0.05111106481531347,
-      "price": 105.51000213623047
+      "dist_sma": 0.07162659105220115,
+      "price": 713.919983
     },
     {
       "id": "IWQU",
       "role": "watch",
-      "score": 0.11350977298161602,
-      "adj_score": 0.11230977298161601,
+      "score": 0.1185711504678203,
+      "adj_score": 0.11737115046782029,
       "trend_ok": true,
       "absmom": true,
-      "dist_sma": 0.05632836368023875,
-      "price": 77.0
+      "dist_sma": 0.06062057617682948,
+      "price": 77.349998
+    },
+    {
+      "id": "IMAE",
+      "role": "core",
+      "score": 0.11738738892467754,
+      "adj_score": 0.11618738892467753,
+      "trend_ok": true,
+      "absmom": true,
+      "dist_sma": 0.0518241582160992,
+      "price": 105.589996
     },
     {
       "id": "XDWH",
       "role": "watch",
-      "score": 0.08769276825427502,
-      "adj_score": 0.08649276825427502,
+      "score": 0.10825407806322251,
+      "adj_score": 0.10705407806322251,
       "trend_ok": true,
       "absmom": true,
-      "dist_sma": 0.0436704319829202,
-      "price": 52.900001525878906
+      "dist_sma": 0.0613056971387842,
+      "price": 53.900002
     },
     {
       "id": "MVOL",
       "role": "watch",
-      "score": 0.05499996316688427,
-      "adj_score": 0.05379996316688427,
+      "score": 0.0591061725581693,
+      "adj_score": 0.0579061725581693,
       "trend_ok": true,
       "absmom": true,
-      "dist_sma": 0.0358355926502274,
-      "price": 66.80000305175781
-    },
-    {
-      "id": "IWDP",
-      "role": "watch",
-      "score": 0.0519333856094715,
-      "adj_score": 0.0507333856094715,
-      "trend_ok": true,
-      "absmom": true,
-      "dist_sma": 0.012048643421743055,
-      "price": 21.829999923706055
+      "dist_sma": 0.039448146453405775,
+      "price": 67.059998
     },
     {
       "id": "SGLD",
       "role": "core",
-      "score": 0.05120955774027244,
-      "adj_score": 0.04770955774027244,
+      "score": 0.05354768872594298,
+      "adj_score": 0.05004768872594298,
       "trend_ok": false,
       "absmom": true,
-      "dist_sma": -0.024541125021999344,
-      "price": 364.1700134277344
+      "dist_sma": -0.022583545011086725,
+      "price": 364.980011
+    },
+    {
+      "id": "IWDP",
+      "role": "watch",
+      "score": 0.04663265152678542,
+      "adj_score": 0.04543265152678542,
+      "trend_ok": true,
+      "absmom": true,
+      "dist_sma": 0.007462715470692549,
+      "price": 21.719999
     },
     {
       "id": "IHYG",
       "role": "watch",
-      "score": 0.01698352771818712,
-      "adj_score": 0.01578352771818712,
+      "score": 0.016313164720268336,
+      "adj_score": 0.015113164720268336,
       "trend_ok": true,
       "absmom": true,
-      "dist_sma": 0.008122731830685126,
-      "price": 91.0199966430664
+      "dist_sma": 0.0075251529471325185,
+      "price": 90.959999
     },
     {
       "id": "IBCI",
       "role": "watch",
-      "score": 0.012117947619694341,
-      "adj_score": 0.010917947619694342,
-      "trend_ok": true,
+      "score": 0.009327760024503168,
+      "adj_score": 0.008127760024503168,
+      "trend_ok": false,
       "absmom": true,
-      "dist_sma": 0.0015376883366819971,
-      "price": 235.77999877929688
+      "dist_sma": -0.0009474912157257931,
+      "price": 235.130005
     },
     {
       "id": "IBGS",
       "role": "defensive",
-      "score": 0.004180631169174748,
-      "adj_score": 0.002980631169174748,
+      "score": 0.0039670765186918255,
+      "adj_score": 0.002767076518691826,
       "trend_ok": true,
       "absmom": false,
-      "dist_sma": 0.0012343076329144331,
-      "price": 141.05999755859375
+      "dist_sma": 0.0010426956758178285,
+      "price": 141.029999
     },
     {
       "id": "IEAC",
       "role": "watch",
-      "score": -0.0010711087362776373,
-      "adj_score": -0.002271108736277637,
+      "score": -0.0020951041583491814,
+      "adj_score": -0.003295104158349181,
       "trend_ok": false,
       "absmom": false,
-      "dist_sma": -0.004349767107032054,
-      "price": 117.05999755859375
+      "dist_sma": -0.005268868020063988,
+      "price": 116.940002
     },
     {
       "id": "IBGM",
       "role": "core",
-      "score": -0.01653120905785735,
-      "adj_score": -0.01773120905785735,
+      "score": -0.018272206505834998,
+      "adj_score": -0.019472206505834998,
       "trend_ok": false,
       "absmom": false,
-      "dist_sma": -0.01657035485384606,
-      "price": 180.75999450683594
+      "dist_sma": -0.018140348230517134,
+      "price": 180.440002
     },
     {
       "id": "IBTM",
       "role": "core",
-      "score": -0.02820247450935015,
-      "adj_score": -0.02940247450935015,
+      "score": -0.029061315026874007,
+      "adj_score": -0.030261315026874007,
       "trend_ok": false,
       "absmom": false,
-      "dist_sma": -0.018067338943392186,
-      "price": 124.47000122070312
+      "dist_sma": -0.01884997778408437,
+      "price": 124.360001
     },
     {
       "id": "DTLA",
       "role": "watch",
-      "score": -0.03629975422987666,
-      "adj_score": -0.03749975422987666,
+      "score": -0.03827572966008441,
+      "adj_score": -0.03947572966008441,
       "trend_ok": false,
       "absmom": false,
-      "dist_sma": -0.021393805477119998,
-      "price": 2.6335999965667725
+      "dist_sma": -0.02320430539371332,
+      "price": 2.6282
     }
   ]
 }

@@ -47,6 +47,18 @@ def test_orders_whole_units_within_cash():
     assert res["cash_after"] >= 0
 
 
+def test_splice_keeps_real_data_and_scales_proxy():
+    from scout.data import splice
+    idx = pd.bdate_range("2015-01-01", "2016-12-31")
+    proxy = pd.Series(range(1, len(idx) + 1), index=idx, dtype=float) * 2.0
+    real = pd.Series(range(100, 100 + 250), index=idx[-250:], dtype=float)
+    col = splice(real, proxy)
+    assert col.index[0] == idx[0] and col.index[-1] == idx[-1]
+    pd.testing.assert_series_equal(col.loc[real.index], real)          # real prices untouched
+    ratio = col.iloc[0] / proxy.iloc[0]
+    assert abs(ratio - real.iloc[0] / proxy.loc[real.index[0]]) < 1e-9  # proxy scaled to meet real at inception
+
+
 if __name__ == "__main__":
-    test_features_and_selection(); test_no_lookahead(); test_orders_whole_units_within_cash()
+    test_features_and_selection(); test_no_lookahead(); test_orders_whole_units_within_cash(); test_splice_keeps_real_data_and_scales_proxy()
     print("all tests passed")

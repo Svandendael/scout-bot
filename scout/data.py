@@ -21,6 +21,7 @@ from . import ROOT, load_config, load_universe
 CACHE = ROOT / load_config()["data"]["cache_dir"]
 CACHE.mkdir(exist_ok=True)
 PRICES_FILE = CACHE / "prices.csv"
+LONG_FILE = CACHE / "prices_long.csv"      # prices with proxy backfill, used by the backtest
 META_FILE = CACHE / "sources.json"
 
 
@@ -98,12 +99,71 @@ def update_prices(start: str = "2008-01-01", force: bool = False) -> pd.DataFram
     prices = prices.ffill()
     prices.index.name = "date"
     prices.to_csv(PRICES_FILE, float_format="%.6f")
-    META_FILE.write_text(json.dumps({"updated": str(date.today()), "sources": sources}, indent=2))
+    meta = {"updated": str(date.today()), "sources": sources}
+    if load_config()["backtest"].get("backfill"):
+        long, info = backfill(prices)
+        long.to_csv(LONG_FILE, float_format="%.6f")
+        meta["backfill"] = info
+    META_FILE.write_text(json.dumps(meta, indent=2))
     return prices
 
 
-def load_prices() -> pd.DataFrame:
-    df = pd.read_csv(PRICES_FILE, index_col="date", parse_dates=True)
+def splice(real: pd.Series, proxy: pd.Series, min_days: int = 60) -> pd.Series | None:
+    """Prepend proxy history (scaled to meet the real series at its first print). Real data wins."""
+    first = real.index[0]
+    before = proxy.loc[:first]
+    if len(before) < min_days:
+        return None
+    anchor = proxy.reindex([first], method="nearest").iloc[0]
+    scaled = before[before.index < first] * (real.iloc[0] / anchor)
+    col = pd.concat([scaled, real])
+    return col[~col.index.duplicated(keep="last")].sort_index()
+
+
+def backfill(prices: pd.DataFrame, start: str = "2000-01-01") -> tuple[pd.DataFrame, dict]:
+    """Extend each ETF backwards with a longer-history proxy (USD twin or index), converted
+    to EUR and scaled so the two series meet at the ETF's first print. Only history *before*
+    inception is taken from the proxy; real ETF prices are never altered."""
+    uni = load_universe()
+    fx = None
+    fx_sym = uni.get("fx")
+    if fx_sym:
+        fx = _yahoo(fx_sym, start)  # EURUSD=X → USD per EUR
+        if fx is None:
+            fx = _stooq("eurusd")
+    out = prices.copy()
+    info = {}
+    for etf in uni["etfs"]:
+        eid, proxies = etf["id"], etf.get("proxies") or []
+        if eid not in out or not proxies:
+            continue
+        real = out[eid].dropna()
+        for t in proxies:
+            px = _yahoo(t, start)
+            if px is None:
+                continue
+            usd = not (t.endswith(".L") or t.endswith(".DE") or t.endswith(".AS") or t.endswith(".PA"))
+            if usd:
+                if fx is None:
+                    continue
+                px = (px / fx.reindex(px.index).ffill()).dropna()
+            col = splice(real, px)
+            if col is None:
+                continue
+            first = real.index[0]
+            out = out.reindex(out.index.union(col.index))
+            out[eid] = col.reindex(out.index)
+            info[eid] = {"proxy": t, "from": str(col.index[0].date()), "to": str(first.date()), "usd": usd}
+            print(f"  {eid:5s} backfilled with {t:22s} {info[eid]['from']} → {info[eid]['to']}")
+            break
+    out = out.sort_index().ffill()
+    out.index.name = "date"
+    return out, info
+
+
+def load_prices(long: bool = False) -> pd.DataFrame:
+    f = LONG_FILE if long and LONG_FILE.exists() else PRICES_FILE
+    df = pd.read_csv(f, index_col="date", parse_dates=True)
     return df.sort_index().ffill()
 
 

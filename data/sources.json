@@ -1,143 +1,193 @@
 {
-  "updated": "2026-09-08",
+  "updated": "2026-09-09",
   "sources": {
     "IWDA": {
       "source": "yahoo:IWDA.AS",
       "first": "2009-09-25",
-      "last": "2026-09-08",
+      "last": "2026-09-07",
       "rows": 4337
     },
     "CSPX": {
       "source": "yahoo:CSPX.AS",
       "first": "2010-05-19",
-      "last": "2026-09-08",
+      "last": "2026-09-07",
       "rows": 3983
     },
     "IMAE": {
       "source": "yahoo:IMAE.AS",
       "first": "2009-10-13",
-      "last": "2026-09-08",
+      "last": "2026-09-07",
       "rows": 4322
     },
     "EMIM": {
       "source": "yahoo:EMIM.AS",
       "first": "2014-06-02",
-      "last": "2026-09-08",
+      "last": "2026-09-07",
       "rows": 3138
     },
     "WSML": {
       "source": "yahoo:IUSN.DE",
       "first": "2018-04-26",
-      "last": "2026-09-08",
+      "last": "2026-09-07",
       "rows": 2123
     },
     "SGLD": {
       "source": "yahoo:SGLD.AS",
       "first": "2017-02-02",
-      "last": "2026-09-08",
+      "last": "2026-09-07",
       "rows": 2446
     },
     "IBGM": {
       "source": "yahoo:IBGM.AS",
       "first": "2008-01-02",
-      "last": "2026-09-08",
+      "last": "2026-09-07",
       "rows": 4779
     },
     "IBTM": {
       "source": "yahoo:IBTM.L",
       "first": "2008-01-02",
-      "last": "2026-09-08",
+      "last": "2026-09-07",
       "rows": 4718
     },
     "IBGS": {
       "source": "yahoo:IBGS.AS",
       "first": "2008-01-02",
-      "last": "2026-09-08",
+      "last": "2026-09-07",
       "rows": 4780
     },
     "IMIE": {
       "source": "yahoo:SPYI.DE",
       "first": "2011-05-16",
-      "last": "2026-09-08",
+      "last": "2026-09-07",
       "rows": 3888
     },
     "CNDX": {
       "source": "yahoo:CNDX.AS",
       "first": "2014-10-06",
-      "last": "2026-09-08",
+      "last": "2026-09-07",
       "rows": 3043
     },
     "IWMO": {
       "source": "yahoo:IS3R.DE",
       "first": "2014-10-06",
-      "last": "2026-09-08",
+      "last": "2026-09-07",
       "rows": 3025
     },
     "IWQU": {
       "source": "yahoo:IS3Q.DE",
       "first": "2014-10-06",
-      "last": "2026-09-08",
+      "last": "2026-09-07",
       "rows": 3025
     },
     "IWVL": {
       "source": "yahoo:IS3S.DE",
       "first": "2014-10-06",
-      "last": "2026-09-08",
+      "last": "2026-09-07",
       "rows": 3025
     },
     "MVOL": {
       "source": "yahoo:IQQ0.DE",
       "first": "2012-11-30",
-      "last": "2026-09-08",
+      "last": "2026-09-07",
       "rows": 3489
     },
     "VVSM": {
       "source": "yahoo:VVSM.DE",
       "first": "2020-12-11",
-      "last": "2026-09-08",
+      "last": "2026-09-07",
       "rows": 1458
     },
     "XDWH": {
       "source": "yahoo:XDWH.DE",
       "first": "2016-04-18",
-      "last": "2026-09-08",
+      "last": "2026-09-07",
       "rows": 2639
     },
     "DTLA": {
       "source": "yahoo:IS04.DE",
       "first": "2015-04-01",
-      "last": "2026-09-08",
+      "last": "2026-09-07",
       "rows": 2901
     },
     "IBCI": {
       "source": "yahoo:IBCI.AS",
       "first": "2008-01-02",
-      "last": "2026-09-08",
+      "last": "2026-09-07",
       "rows": 4780
     },
     "IEAC": {
       "source": "yahoo:IEAC.AS",
       "first": "2009-05-06",
-      "last": "2026-09-08",
+      "last": "2026-09-07",
       "rows": 4438
     },
     "IHYG": {
       "source": "yahoo:IHYG.L",
       "first": "2010-09-03",
-      "last": "2026-09-08",
+      "last": "2026-09-07",
       "rows": 4044
     },
     "IWDP": {
       "source": "yahoo:IWDP.AS",
       "first": "2008-01-02",
-      "last": "2026-09-08",
+      "last": "2026-09-07",
       "rows": 4779
     },
     "ICOM": {
       "source": "yahoo:SXRS.DE",
       "first": "2018-05-03",
-      "last": "2026-09-08",
+      "last": "2026-09-07",
       "rows": 2119
+    }
+  },
+  "backfill": {
+    "IWDA": {
+      "proxy": "^990100-USD-STRD",
+      "from": "2003-12-01",
+      "to": "2009-09-25",
+      "usd": true
+    },
+    "CSPX": {
+      "proxy": "SPY",
+      "from": "2003-12-01",
+      "to": "2010-05-19",
+      "usd": true
+    },
+    "IMAE": {
+      "proxy": "IEV",
+      "from": "2003-12-01",
+      "to": "2009-10-13",
+      "usd": true
+    },
+    "EMIM": {
+      "proxy": "EEM",
+      "from": "2003-12-01",
+      "to": "2014-06-02",
+      "usd": true
+    },
+    "WSML": {
+      "proxy": "IWM",
+      "from": "2003-12-01",
+      "to": "2018-04-26",
+      "usd": true
+    },
+    "SGLD": {
+      "proxy": "GLD",
+      "from": "2004-11-18",
+      "to": "2017-02-02",
+      "usd": true
+    },
+    "IBTM": {
+      "proxy": "IEF",
+      "from": "2003-12-01",
+      "to": "2008-01-02",
+      "usd": true
+    },
+    "IMIE": {
+      "proxy": "VT",
+      "from": "2008-06-26",
+      "to": "2011-05-16",
+      "usd": true
     }
   }
 }

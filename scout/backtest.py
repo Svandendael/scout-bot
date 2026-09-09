@@ -81,9 +81,12 @@ def run_backtest(prices: pd.DataFrame, cfg: dict | None = None, uni: dict | None
     rets = me[list(w6040)].loc[dates[0]:dates[-1]].pct_change().fillna(0)
     mix = (1 + (rets * pd.Series(w6040)).sum(axis=1)).cumprod().rename("60_40")
 
+    cs = float(cfg["portfolio"].get("core_share", 0) or 0)
+    blend = (cs * bh.reindex(curve.index).ffill() + (1 - cs) * curve).rename("blend")
+
     years = (dates[-1] - dates[0]).days / 365.25
-    out = {"curve": curve, "global_etf": bh, "60_40": mix,
-           "metrics": {"scout": _metrics(curve), "global_etf": _metrics(bh), "60_40": _metrics(mix)},
+    out = {"curve": curve, "global_etf": bh, "60_40": mix, "blend": blend, "core_share": cs,
+           "metrics": {"scout": _metrics(curve), "global_etf": _metrics(bh), "60_40": _metrics(mix), "blend": _metrics(blend)},
            "turnover_per_year": turnover_total / years if years else np.nan,
            "trades_per_year": n_trades / years if years else np.nan,
            "months_risk_off": sum(r == "risk-off" for r in regimes) / max(len(regimes), 1),
@@ -91,7 +94,13 @@ def run_backtest(prices: pd.DataFrame, cfg: dict | None = None, uni: dict | None
     # quarterly returns table
     q = curve.resample("QE").last()
     qb = bh.resample("QE").last()
-    out["quarterly"] = pd.DataFrame({"scout": q.pct_change(), "global_etf": qb.pct_change()}).dropna()
+    qbl = blend.resample("QE").last()
+    out["quarterly"] = pd.DataFrame({"scout": q.pct_change(), "global_etf": qb.pct_change(), "blend": qbl.pct_change()}).dropna()
+    # worst episodes: drawdown table per calendar year with a >10% peak-to-trough for the benchmark
+    dd_b = (bh / bh.cummax() - 1); dd_s = (curve / curve.cummax() - 1); dd_bl = (blend / blend.cummax() - 1)
+    yrs_tbl = pd.DataFrame({"global_etf": dd_b.groupby(dd_b.index.year).min(), "scout": dd_s.groupby(dd_s.index.year).min(),
+                            "blend": dd_bl.groupby(dd_bl.index.year).min()})
+    out["worst_years"] = yrs_tbl[yrs_tbl["global_etf"] < -0.10]
     return out
 
 

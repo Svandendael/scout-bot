@@ -177,8 +177,20 @@
       "to": "2017-02-02",
       "usd": true
     },
+    "IBGM": {
+      "proxy": "IEF",
+      "from": "2003-12-01",
+      "to": "2008-01-02",
+      "usd": true
+    },
     "IBTM": {
       "proxy": "IEF",
+      "from": "2003-12-01",
+      "to": "2008-01-02",
+      "usd": true
+    },
+    "IBGS": {
+      "proxy": "SHY",
       "from": "2003-12-01",
       "to": "2008-01-02",
       "usd": true

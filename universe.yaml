@@ -76,7 +76,7 @@ etfs:
     defensive: true
     tob: 0.0012
     tickers: [IBGM.AS, IBCM.DE, IBGM.L]
-    proxies: [IBGM.L, IBCM.DE]
+    proxies: [IEF]
   - id: IBTM
     name: iShares $ Treasury 7-10yr (dist)
     isin: IE00B1FZS798
@@ -93,7 +93,7 @@ etfs:
     defensive: true
     tob: 0.0012
     tickers: [IBGS.AS, IBGS.L, IBCA.DE]
-    proxies: [IBGS.L, IBCA.DE]
+    proxies: [SHY]
   - id: IMIE
     name: SPDR MSCI ACWI IMI
     isin: IE00B3YLTY66

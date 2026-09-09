@@ -4,140 +4,140 @@
     "IWDA": {
       "source": "yahoo:IWDA.AS",
       "first": "2009-09-25",
-      "last": "2026-09-07",
-      "rows": 4337
+      "last": "2026-09-09",
+      "rows": 4338
     },
     "CSPX": {
       "source": "yahoo:CSPX.AS",
       "first": "2010-05-19",
-      "last": "2026-09-07",
-      "rows": 3983
+      "last": "2026-09-09",
+      "rows": 3984
     },
     "IMAE": {
       "source": "yahoo:IMAE.AS",
       "first": "2009-10-13",
-      "last": "2026-09-07",
-      "rows": 4322
+      "last": "2026-09-09",
+      "rows": 4323
     },
     "EMIM": {
       "source": "yahoo:EMIM.AS",
       "first": "2014-06-02",
-      "last": "2026-09-07",
-      "rows": 3138
+      "last": "2026-09-09",
+      "rows": 3139
     },
     "WSML": {
       "source": "yahoo:IUSN.DE",
       "first": "2018-04-26",
-      "last": "2026-09-07",
-      "rows": 2123
+      "last": "2026-09-09",
+      "rows": 2124
     },
     "SGLD": {
       "source": "yahoo:SGLD.AS",
       "first": "2017-02-02",
-      "last": "2026-09-07",
-      "rows": 2446
+      "last": "2026-09-09",
+      "rows": 2447
     },
     "IBGM": {
       "source": "yahoo:IBGM.AS",
       "first": "2008-01-02",
-      "last": "2026-09-07",
-      "rows": 4779
+      "last": "2026-09-09",
+      "rows": 4780
     },
     "IBTM": {
       "source": "yahoo:IBTM.L",
       "first": "2008-01-02",
-      "last": "2026-09-07",
-      "rows": 4718
+      "last": "2026-09-09",
+      "rows": 4719
     },
     "IBGS": {
       "source": "yahoo:IBGS.AS",
       "first": "2008-01-02",
-      "last": "2026-09-07",
-      "rows": 4780
+      "last": "2026-09-09",
+      "rows": 4781
     },
     "IMIE": {
       "source": "yahoo:SPYI.DE",
       "first": "2011-05-16",
-      "last": "2026-09-07",
-      "rows": 3888
+      "last": "2026-09-09",
+      "rows": 3889
     },
     "CNDX": {
       "source": "yahoo:CNDX.AS",
       "first": "2014-10-06",
-      "last": "2026-09-07",
-      "rows": 3043
+      "last": "2026-09-09",
+      "rows": 3044
     },
     "IWMO": {
       "source": "yahoo:IS3R.DE",
       "first": "2014-10-06",
-      "last": "2026-09-07",
-      "rows": 3025
+      "last": "2026-09-09",
+      "rows": 3026
     },
     "IWQU": {
       "source": "yahoo:IS3Q.DE",
       "first": "2014-10-06",
-      "last": "2026-09-07",
-      "rows": 3025
+      "last": "2026-09-09",
+      "rows": 3026
     },
     "IWVL": {
       "source": "yahoo:IS3S.DE",
       "first": "2014-10-06",
-      "last": "2026-09-07",
-      "rows": 3025
+      "last": "2026-09-09",
+      "rows": 3026
     },
     "MVOL": {
       "source": "yahoo:IQQ0.DE",
       "first": "2012-11-30",
-      "last": "2026-09-07",
-      "rows": 3489
+      "last": "2026-09-09",
+      "rows": 3490
     },
     "VVSM": {
       "source": "yahoo:VVSM.DE",
       "first": "2020-12-11",
-      "last": "2026-09-07",
-      "rows": 1458
+      "last": "2026-09-09",
+      "rows": 1459
     },
     "XDWH": {
       "source": "yahoo:XDWH.DE",
       "first": "2016-04-18",
-      "last": "2026-09-07",
-      "rows": 2639
+      "last": "2026-09-09",
+      "rows": 2640
     },
     "DTLA": {
       "source": "yahoo:IS04.DE",
       "first": "2015-04-01",
-      "last": "2026-09-07",
-      "rows": 2901
+      "last": "2026-09-09",
+      "rows": 2902
     },
     "IBCI": {
       "source": "yahoo:IBCI.AS",
       "first": "2008-01-02",
-      "last": "2026-09-07",
-      "rows": 4780
+      "last": "2026-09-09",
+      "rows": 4781
     },
     "IEAC": {
       "source": "yahoo:IEAC.AS",
       "first": "2009-05-06",
-      "last": "2026-09-07",
-      "rows": 4438
+      "last": "2026-09-09",
+      "rows": 4439
     },
     "IHYG": {
       "source": "yahoo:IHYG.L",
       "first": "2010-09-03",
-      "last": "2026-09-07",
-      "rows": 4044
+      "last": "2026-09-09",
+      "rows": 4045
     },
     "IWDP": {
       "source": "yahoo:IWDP.AS",
       "first": "2008-01-02",
-      "last": "2026-09-07",
-      "rows": 4779
+      "last": "2026-09-09",
+      "rows": 4780
     },
     "ICOM": {
       "source": "yahoo:SXRS.DE",
       "first": "2018-05-03",
-      "last": "2026-09-07",
-      "rows": 2119
+      "last": "2026-09-09",
+      "rows": 2120
     }
   },
   "backfill": {
